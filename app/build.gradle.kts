@@ -4,15 +4,14 @@ plugins {
 
 android {
     namespace = "com.nickwoluff.wearcalculator"
-    // 你这 compileSdk 用的是 API 36 (Android 16)，真的很前沿！
     compileSdk = 36
 
     defaultConfig {
         applicationId = "com.nickwoluff.wearcalculator"
         minSdk = 24
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

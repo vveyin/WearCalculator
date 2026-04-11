@@ -41,7 +41,9 @@ public class MainActivity extends Activity {
         tvHistory = findViewById(R.id.tvHistory);
         hsvDisplay = findViewById(R.id.hsvDisplay);
         hsvHistory = findViewById(R.id.hsvHistory);
-        CurvedTextView curvedTime = findViewById(R.id.curvedTime);
+
+        // 🌟 方屏适配核心 1：使用基础的 View 接收时钟，千万不要强转为 CurvedTextView，否则方屏必崩！
+        final View timeView = findViewById(R.id.curvedTime);
 
         // 2. 按钮逻辑
         View.OnClickListener listener = v -> {
@@ -72,14 +74,24 @@ public class MainActivity extends Activity {
             if (b != null) b.setOnClickListener(listener);
         }
 
-        // 3. 时钟逻辑（12 小时制）
+        // 3. 时钟逻辑（12 小时制 + 方圆双屏智能识别）
         Handler handler = new Handler(Looper.getMainLooper());
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm", Locale.getDefault());
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (curvedTime != null) curvedTime.setText(sdf.format(new Date()));
-                handler.postDelayed(this, 10000);
+                if (timeView != null) {
+                    String timeStr = sdf.format(new Date());
+                    // 🌟 方屏适配核心 2：动态判断当前加载进来的是什么控件
+                    if (timeView instanceof CurvedTextView) {
+                        // 圆屏加载的是弧形文字
+                        ((CurvedTextView) timeView).setText(timeStr);
+                    } else if (timeView instanceof TextView) {
+                        // 方屏加载的是普通文字
+                        ((TextView) timeView).setText(timeStr);
+                    }
+                }
+                handler.postDelayed(this, 10000); // 10秒刷新一次，省电又准时
             }
         });
 
@@ -98,16 +110,16 @@ public class MainActivity extends Activity {
 
                     rotaryAccumulator += delta;
 
-                    // 🌟 调优 1：适当调大阈值到 1.2f 或 1.5f，让震动更有“颗粒感”，而不是糊成一团
+                    // 🌟 调优 1：保留你设置的 0.8f，颗粒感与灵敏度兼得
                     if (Math.abs(rotaryAccumulator) >= 0.8f) {
 
                         // 🌟 调优 2：选择最轻盈的触感常量
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // API 30+
                             // 这是专为旋转设计的轻微滴答感
-                            v.performHapticFeedback(18); // 18 是 ROTARY_SCROLL_TICK
+                            v.performHapticFeedback(18); // ROTARY_SCROLL_TICK
                         } else {
                             // 经典的短促滴答，比 KEYBOARD_TAP 轻很多
-                            v.performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK);
+                            v.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
                         }
 
                         rotaryAccumulator = 0f;
@@ -122,6 +134,8 @@ public class MainActivity extends Activity {
         hsvDisplay.setFocusable(true);
         hsvDisplay.requestFocus();
     }
+
+    // --- 以下为计算逻辑封装，保持绝对的运算精度 ---
 
     private void handleCalculation() {
         try {
