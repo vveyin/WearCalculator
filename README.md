@@ -1,6 +1,6 @@
 # 🐾 嗷呜计算器 (WearCalculator)
 
-![Release](https://img.shields.io/github/v/release/NickWoluff/WearCalculator)
+![Last Version](https://img.shields.io/github/release/NickWoluff/WearCalculator/all.svg?style=flat-square&color=brightgreen)
 
 **专为智能手表打造的高精度计算器，嗷呜！**
 
