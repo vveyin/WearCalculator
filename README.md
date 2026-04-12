@@ -25,8 +25,8 @@
 >前往 **微思应用商店** 手表端，搜索“嗷呜计算器”下载安装。
 
 **ADB手动安装**：
->1.  前往 [Releases](https://github.com/NickWoluff/WearCalculator/releases) 页面下载最新版本。
->2.  确保你的手表已开启**开发者模式**和**ADB 调试 / 无线调试**。
+>1.  前往 [Releases](https://github.com/NickWoluff/WearCalculator/releases) 页面下载最新版本；
+>2.  确保你的手表已开启**开发者模式**和**ADB 调试 / 无线调试**；
 >3.  使用adb工具（如甲壳虫ADB助手、WearOS工具箱）或电脑端 ADB 命令行将 APK 推送到手表：
     ```bash
     adb install WearCalculator_vX.X.X.apk
