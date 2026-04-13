@@ -28,53 +28,95 @@ public class MainActivity extends Activity {
     private HorizontalScrollView hsvDisplay, hsvHistory;
     private final StringBuilder currentText = new StringBuilder("0");
 
-    // 🌟 核心：旋转累加器，用来消除“漏电感”
+    // 🌟 核心调优：震动累加器
     private float rotaryAccumulator = 0f;
+
+    // 🌟 修复 Bug 核心：标记上一步是不是刚刚按了 "="
+    private boolean lastActionWasEqual = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 1. 初始化
         tvDisplay = findViewById(R.id.tvDisplay);
         tvHistory = findViewById(R.id.tvHistory);
         hsvDisplay = findViewById(R.id.hsvDisplay);
         hsvHistory = findViewById(R.id.hsvHistory);
-
-        // 🌟 方屏适配核心 1：使用基础的 View 接收时钟，千万不要强转为 CurvedTextView，否则方屏必崩！
         final View timeView = findViewById(R.id.curvedTime);
 
-        // 2. 按钮逻辑
+        // 按钮逻辑
         View.OnClickListener listener = v -> {
             String btnText = ((Button) v).getText().toString();
+
+            // 错误状态恢复
             if (currentText.toString().equals("Error") && !btnText.equals("C")) {
                 currentText.setLength(0); currentText.append("0");
             }
 
+            // 🌟 核心状态机修复：处理计算完成后的后续输入
+            if (lastActionWasEqual && !btnText.equals("C") && !btnText.equals("=")) {
+                if (btnText.matches("[+\\-×÷]")) {
+                    // 如果刚算完就按运算符：保留结果，但必须斩断 "..." 尾巴
+                    if (currentText.toString().endsWith("...")) {
+                        currentText.setLength(currentText.length() - 3);
+                    }
+                } else if (btnText.matches("[0-9]")) {
+                    // 如果刚算完就按数字：清空屏幕，开始全新计算
+                    currentText.setLength(0);
+                } else if (btnText.equals(".")) {
+                    // 如果刚算完按小数点：以 "0." 开始全新计算
+                    currentText.setLength(0);
+                    currentText.append("0");
+                }
+                lastActionWasEqual = false; // 状态解除
+            }
+
             switch (btnText) {
-                case "C": currentText.setLength(0); currentText.append("0"); tvHistory.setText(""); break;
-                case "⌫":
-                    if (currentText.length() > 1) currentText.setLength(currentText.length() - 1);
-                    else { currentText.setLength(0); currentText.append("0"); }
+                case "C":
+                    currentText.setLength(0); currentText.append("0"); tvHistory.setText("");
+                    lastActionWasEqual = false;
                     break;
-                case "=": handleCalculation(); break;
-                case ".": handleDot(); break;
-                default: handleNumberAndOperator(btnText); break;
+                case "⌫":
+                    if (lastActionWasEqual) {
+                        // 刚算完按退格，直接清零重来最符合直觉
+                        currentText.setLength(0); currentText.append("0");
+                        lastActionWasEqual = false;
+                    } else {
+                        if (currentText.length() > 1) currentText.setLength(currentText.length() - 1);
+                        else { currentText.setLength(0); currentText.append("0"); }
+                    }
+                    break;
+                case "=":
+                    if (!lastActionWasEqual) { // 防止疯狂连按等号
+                        handleCalculation();
+                        lastActionWasEqual = true; // 标记计算完成
+                    }
+                    break;
+                case ".":
+                    handleDot();
+                    break;
+                case ">_":
+                    // 🌟 终端按键占位保护：当前版本点它什么都不会发生，绝对安全
+                    break;
+                default:
+                    handleNumberAndOperator(btnText);
+                    break;
             }
             tvDisplay.setText(currentText.toString());
             hsvDisplay.post(() -> hsvDisplay.fullScroll(View.FOCUS_RIGHT));
         };
 
+        // 注册所有按钮
         int[] ids = {R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6,
                 R.id.btn7, R.id.btn8, R.id.btn9, R.id.btnAdd, R.id.btnSub, R.id.btnMul,
-                R.id.btnDiv, R.id.btnDot, R.id.btnEq, R.id.btnAc, R.id.btnDel};
+                R.id.btnDiv, R.id.btnDot, R.id.btnEq, R.id.btnAc, R.id.btnDel, R.id.btnMore}; // 加入了 btnMore
         for (int id : ids) {
             Button b = findViewById(id);
             if (b != null) b.setOnClickListener(listener);
         }
 
-        // 3. 时钟逻辑（12 小时制 + 方圆双屏智能识别）
+        // 时钟逻辑
         Handler handler = new Handler(Looper.getMainLooper());
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm", Locale.getDefault());
         handler.post(new Runnable() {
@@ -82,20 +124,14 @@ public class MainActivity extends Activity {
             public void run() {
                 if (timeView != null) {
                     String timeStr = sdf.format(new Date());
-                    // 🌟 方屏适配核心 2：动态判断当前加载进来的是什么控件
-                    if (timeView instanceof CurvedTextView) {
-                        // 圆屏加载的是弧形文字
-                        ((CurvedTextView) timeView).setText(timeStr);
-                    } else if (timeView instanceof TextView) {
-                        // 方屏加载的是普通文字
-                        ((TextView) timeView).setText(timeStr);
-                    }
+                    if (timeView instanceof CurvedTextView) ((CurvedTextView) timeView).setText(timeStr);
+                    else if (timeView instanceof TextView) ((TextView) timeView).setText(timeStr);
                 }
-                handler.postDelayed(this, 10000); // 10秒刷新一次，省电又准时
+                handler.postDelayed(this, 10000);
             }
         });
 
-        // 4. 表冠旋转（超轻触感版）
+        // 表冠旋转逻辑
         hsvDisplay.setOnGenericMotionListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_SCROLL &&
                     event.isFromSource(InputDevice.SOURCE_ROTARY_ENCODER)) {
@@ -107,21 +143,14 @@ public class MainActivity extends Activity {
 
                 if (delta != 0) {
                     v.scrollBy(Math.round(delta * 80), 0);
-
                     rotaryAccumulator += delta;
 
-                    // 🌟 调优 1：保留你设置的 0.8f，颗粒感与灵敏度兼得
-                    if (Math.abs(rotaryAccumulator) >= 0.8f) {
-
-                        // 🌟 调优 2：选择最轻盈的触感常量
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { // API 30+
-                            // 这是专为旋转设计的轻微滴答感
-                            v.performHapticFeedback(18); // ROTARY_SCROLL_TICK
+                    if (Math.abs(rotaryAccumulator) >= 0.6f) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            v.performHapticFeedback(18);
                         } else {
-                            // 经典的短促滴答，比 KEYBOARD_TAP 轻很多
                             v.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK);
                         }
-
                         rotaryAccumulator = 0f;
                     }
                 }
@@ -130,12 +159,9 @@ public class MainActivity extends Activity {
             return false;
         });
 
-        // 必须请求焦点，表冠才能第一时间响应
         hsvDisplay.setFocusable(true);
         hsvDisplay.requestFocus();
     }
-
-    // --- 以下为计算逻辑封装，保持绝对的运算精度 ---
 
     private void handleCalculation() {
         try {
