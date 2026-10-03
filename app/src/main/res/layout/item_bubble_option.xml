@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  气泡里的单个选项。用 Button 而不是 TextView，这样能直接套用和按键一样的
+  胶囊背景（bg_btn_dark）与水波纹反馈；尺寸由 FunctionBubbleView 按内容数量算出来设置。
+-->
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="36dp"
+    android:layout_height="30dp"
+    android:background="@drawable/bg_btn_dark"
+    android:includeFontPadding="false"
+    android:minWidth="0dp"
+    android:minHeight="0dp"
+    android:padding="0dp"
+    android:singleLine="true"
+    android:textAllCaps="false"
+    android:textColor="#FFF"
+    android:textSize="13sp" />

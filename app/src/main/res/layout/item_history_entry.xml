@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  历史列表里的一条记录：上面小字是算式，下面大字是结果。
+
+  要求「每个算式都靠右对齐，并且不超出屏幕」：
+  · 靠右：gravity="end"，两条都是。
+  · 不超出：宽度 match_parent（会被外层容器裁到安全区内），
+    强制 singleLine + ellipsize="start"（从**开头**省略）。
+    用 start 而不是 middle：算式和结果都是右对齐的，
+    省略开头能保住最重要的尾部数字，也不会让文字冲出边界。
+  左右留白由外层（安全区内缩 + 列表 padding）负责，这里不再加。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/tvHistoryExpression"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="start"
+        android:gravity="end"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textColor="#99FFFFFF"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvHistoryResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:ellipsize="start"
+        android:gravity="end"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp" />
+</LinearLayout>

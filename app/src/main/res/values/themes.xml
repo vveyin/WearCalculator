@@ -1,17 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme.
+
+         本地构建说明：这几个 colorPrimaryVariant / colorOnPrimary / colorSecondary /
+         colorSecondaryVariant / colorOnSecondary 不是 framework 属性，只有依赖
+         material 或 appcompat 时才存在。本地为了压低依赖把 material 去掉了，
+         所以这里只保留 framework 真正认识的部分。
+         完整的原文件备份在 tools/themes.xml.orig，恢复官方配置时拷回去即可。 -->
     <style name="Theme.WearCalculator" parent="android:Theme.DeviceDefault.NoActionBar">
         <item name="android:fontFamily">@font/misans_regular</item>
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/purple_700</item>
     </style>
 </resources>

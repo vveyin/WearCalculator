@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  通用「长按选择」气泡的内容：若干选项并排，全部同时完整显示，不需要划动。
+  选项由 FunctionBubbleView.setChoices() 动态生成（对数键是 ln/lg/log，
+  sin/cos/tan 三个键是 sin/asin/sinh/asinh 这类）。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bubbleOptions"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="3dp" />

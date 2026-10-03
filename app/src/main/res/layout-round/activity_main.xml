@@ -1,18 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  圆屏布局。
+  沿用原来的椭圆（弧形收窄）排布，只改科学模式下的按键文字，与方屏完全一致：
+    7→(  8→)  9→!  ÷→^  4→sin(  5→cos(  6→tan(  −→e  ×→π  1→对数  2→%
+    0 键在科学模式下直接显示当前角度单位，点一下在 DEG / RAD 之间切换，. 与 = 不变。
+  另外顺手修好了原来写错的 xmlns:tools 命名空间
+  （原值是 .../schemas/tools，正确是 .../tools）。
+  圆屏按键更窄，科学模式的文字由 MainActivity 换成小一号字号。
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/schemas/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
     tools:context=".MainActivity"
     tools:deviceIds="wear_round">
 
-    <LinearLayout
+    <!--
+      分层说明（配合 MainActivity 的动态覆盖层）：
+      这一层是「计算器本体」，位于最底层。his 按钮和历史浮窗由 MainActivity
+      在内容容器里再叠两层（见 attachOverlays），顺序是：
+        计算器本体（本布局）→ 历史浮窗 → his 按钮
+      这样 his 按钮永远浮在最上面、位置和大小都固定，不用再跟着历史页适配。
+    -->
+    <FrameLayout
+        android:id="@+id/calculatorContent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="0dp">
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="0dp">
 
         <Space
             android:layout_width="match_parent"
@@ -71,6 +92,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/keypad"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3.2"
@@ -82,12 +104,12 @@
                 android:layout_weight="1"
                 android:weightSum="5">
 
-                <Button android:id="@+id/btnAc" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.84" android:background="@drawable/bg_btn_danger" android:text="C" android:textColor="#FFF" android:textSize="14sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btn7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_dark" android:text="7" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btn8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_dark" android:text="8" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btn9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_dark" android:text="9" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btnDiv" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_accent" android:text="÷" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btnDel" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_danger" android:text="⌫" android:textColor="#FFF" android:textSize="14sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btnAc" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.84" android:background="@drawable/bg_btn_danger" android:text="C" android:textAllCaps="false" android:textColor="#FFF" android:textSize="14sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_dark" android:text="7" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_dark" android:text="8" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_dark" android:text="9" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btnDiv" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_accent" android:text="÷" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btnDel" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.83" android:background="@drawable/bg_btn_danger" android:text="⌫" android:textAllCaps="false" android:textColor="#FFF" android:textSize="14sp" android:padding="0dp" android:includeFontPadding="false" />
             </LinearLayout>
 
             <LinearLayout
@@ -96,11 +118,11 @@
                 android:layout_weight="1"
                 android:weightSum="5">
                 <Space android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.25" />
-                <Button android:id="@+id/btn4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="4" android:background="@drawable/bg_btn_dark" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btn5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="5" android:background="@drawable/bg_btn_dark" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btn6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="6" android:background="@drawable/bg_btn_dark" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btnSub" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="-" android:background="@drawable/bg_btn_accent" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btnMul" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.9" android:background="@drawable/bg_btn_accent" android:text="×" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="4" android:background="@drawable/bg_btn_dark" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="5" android:background="@drawable/bg_btn_dark" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="6" android:background="@drawable/bg_btn_dark" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btnSub" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.9" android:layout_margin="2dp" android:text="-" android:background="@drawable/bg_btn_accent" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btnMul" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.9" android:background="@drawable/bg_btn_accent" android:text="×" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
             </LinearLayout>
 
             <LinearLayout
@@ -109,10 +131,10 @@
                 android:layout_weight="1"
                 android:weightSum="5">
                 <Space android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.6" />
-                <Button android:id="@+id/btn1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.95" android:layout_margin="2dp" android:text="1" android:background="@drawable/bg_btn_dark" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btn2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.95" android:layout_margin="2dp" android:text="2" android:background="@drawable/bg_btn_dark" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btn3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.95" android:layout_margin="2dp" android:text="3" android:background="@drawable/bg_btn_dark" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
-                <Button android:id="@+id/btnAdd" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.95" android:background="@drawable/bg_btn_accent" android:text="+" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.95" android:layout_margin="2dp" android:text="1" android:background="@drawable/bg_btn_dark" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.95" android:layout_margin="2dp" android:text="2" android:background="@drawable/bg_btn_dark" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.95" android:layout_margin="2dp" android:text="3" android:background="@drawable/bg_btn_dark" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btnAdd" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.95" android:background="@drawable/bg_btn_accent" android:text="+" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
                 <Space android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.5" />
             </LinearLayout>
 
@@ -122,7 +144,7 @@
                 android:layout_weight="1"
                 android:weightSum="5">
                 <Space android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1.23" />
-                <Button android:id="@+id/btn0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.85" android:layout_margin="2dp" android:text="0" android:background="@drawable/bg_btn_dark" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btn0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.85" android:layout_margin="2dp" android:text="0" android:background="@drawable/bg_btn_dark" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
 
                 <Button
                     android:id="@+id/btnDot"
@@ -134,10 +156,10 @@
                     android:includeFontPadding="false"
                     android:padding="0dp"
                     android:text="."
-                    android:textColor="#FFF"
+                    android:textAllCaps="false" android:textColor="#FFF"
                     android:textSize="16sp" />
 
-                <Button android:id="@+id/btnEq" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.85" android:background="@drawable/bg_btn_accent" android:text="=" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
+                <Button android:id="@+id/btnEq" android:layout_width="0dp" android:layout_height="match_parent" android:layout_margin="2dp" android:layout_weight="0.85" android:background="@drawable/bg_btn_accent" android:text="=" android:textAllCaps="false" android:textColor="#FFF" android:textSize="16sp" android:padding="0dp" android:includeFontPadding="false" />
             </LinearLayout>
 
             <Space
@@ -146,7 +168,8 @@
                 android:layout_weight="0.4" />
 
         </LinearLayout>
-    </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
 
     <androidx.wear.widget.CurvedTextView
         android:id="@+id/curvedTime"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 记录历史开关：和按键一样是暗色胶囊，打开时高亮成强调色。 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/log_option_selected_bg" />
+            <corners android:radius="50dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#2D2F33" />
+            <corners android:radius="50dp" />
+        </shape>
+    </item>
+</selector>

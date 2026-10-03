@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- 底数选择气泡 -->
+    <color name="log_bubble_bg">#F21F2124</color>
+    <color name="log_option_selected_bg">#4B586B</color>
+    <color name="log_option_text">#CCFFFFFF</color>
 </resources>

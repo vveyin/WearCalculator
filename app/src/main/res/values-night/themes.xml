@@ -1,17 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- 夜间主题。本地构建说明同 values/themes.xml：
+         Material 专有属性已移除，原文件备份在 tools/themes-night.xml.orig。 -->
     <style name="Theme.WearCalculator" parent="android:Theme.DeviceDefault.NoActionBar">
         <item name="android:fontFamily">@font/misans_regular</item>
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/purple_700</item>
     </style>
 </resources>

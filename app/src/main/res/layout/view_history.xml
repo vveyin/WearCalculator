@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  历史记录浮窗：只包含「历史列表 + 记录开关」。
+  his 按钮**不在这里** —— 它是独立的一层，由 MainActivity 在内容容器里
+  单独叠在最上面（见 attachOverlays），位置和大小完全固定，
+  所以历史页不用再为按钮做任何尺寸/位置适配。
+
+  层级（由下到上）：计算器本体 → 本浮窗 → his 按钮。
+  浮窗出现时盖住计算器，而 his 按钮依然露在最上面、随时可点。
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/historyPage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 历史列表：占满可用空间，可上下滑 / 圆屏转表冠 -->
+        <ScrollView
+            android:id="@+id/svHistory"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:fadeScrollbars="false"
+            android:fillViewport="true"
+            android:focusable="false"
+            android:overScrollMode="never">
+
+            <LinearLayout
+                android:id="@+id/llHistoryItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <!-- 「记录历史」开关：居中放在浮窗下方 -->
+        <Button
+            android:id="@+id/btnHistoryRecordToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/bg_btn_dark_toggle"
+            android:includeFontPadding="false"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="记录历史"
+            android:textAllCaps="false"
+            android:textColor="#FFF"
+            android:textSize="12sp" />
+
+        <!-- 给最上层固定的 his 按钮让出位置，避免开关被压在它下面 -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="58dp" />
+    </LinearLayout>
+</FrameLayout>
